@@ -66,8 +66,8 @@ input[type="checkbox"]:active{transform:scale(.94)}
 .main-tab.active,.main-tab[aria-selected="true"]{color:#fff;background:#302c59;border-color:#514c8e}
 .main-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .tab-panel{min-width:0}
-.assembly-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);}
-.visualization-layout{grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);}
+.assembly-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.visualization-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
 .visualization-layout .output-panel,.visualization-layout .code-panel{min-width:0;min-height:0}
 .code-panel{display:flex;flex-direction:column}
 .code-panel .code-view{height:calc(100% - 70px);min-height:0;flex:1}
@@ -88,3 +88,10 @@ input[type="checkbox"]:active{transform:scale(.94)}
 .language-picker{display:flex;align-items:center;gap:5px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.6px}
 .language-picker select{background:#101722;color:var(--text);border:1px solid #334158;border-radius:6px;padding:6px 7px;font:inherit;cursor:pointer}
 .language-picker select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Output items keep identity on the first line and descriptions on a safe second line. */
+.preview-row{display:flex;flex-direction:column;gap:6px;min-width:0}
+.preview-row-main{display:flex;align-items:center;gap:10px;min-width:0}
+.preview-row-main>span:first-child{min-width:0;overflow-wrap:anywhere}
+.preview-row-description{min-width:0;color:var(--muted);overflow-wrap:anywhere;word-break:break-word}
+.preview-row .type-badge{flex:0 0 auto}

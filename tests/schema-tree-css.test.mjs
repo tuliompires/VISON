@@ -110,7 +110,24 @@ test('main tabs implement CA-09 through CA-13 keyboard and focus semantics', () 
 test('main tab CSS covers CA-14 and CA-15 responsive layout and visible focus', () => {
   assert.match(css,/\.main-tabs\{/); assert.match(css,/\.main-tab:focus-visible/);
   assert.match(css,/\.assembly-layout\{grid-template-columns:minmax\(0,1fr\)/);
-  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,1\.55fr\)/);
+  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
   assert.match(css,/@media\(max-width:950px\)\{\.assembly-layout,\.visualization-layout\{grid-template-columns:minmax\(0,1fr\)/);
   assert.match(css,/@media\(max-width:650px\)/);
+});
+
+test('assembly and visualization panel pairs use equal desktop columns', () => {
+  assert.match(css,/\.assembly-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
+  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
+});
+
+test('output rows group name and type, then wrap the description safely', () => {
+  const view=fs.readFileSync(new URL('../js/views/schema-view.js',import.meta.url),'utf8');
+  assert.match(view,/class:'preview-row-main'/);
+  assert.match(view,/class:'preview-row-description'/);
+  assert.match(view,/typeLabel\(v\.type\)/);
+  assert.match(view,/v\.description\|\|'—'/);
+  assert.doesNotMatch(view,/innerHTML/);
+  assert.match(css,/\.preview-row\{[^}]*min-width:0/);
+  assert.match(css,/\.preview-row-main\{[^}]*min-width:0/);
+  assert.match(css,/\.preview-row-description\{[^}]*overflow-wrap:anywhere/);
 });

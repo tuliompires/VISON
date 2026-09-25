@@ -1,0 +1,28 @@
+﻿{
+    "release":  "0.1.0-local",
+    "result":  "G7 APPROVED",
+    "verifiedAt":  "2026-09-25T00:38:05.8707673Z",
+    "artifactDirectory":  "C:\\Users\\user\\Documents\\6-MaestriWorkspaces\\pessoal\\02-projetos-dev\\03-vison\\release\\vison-0.1.0-local",
+    "artifactZip":  "C:\\Users\\user\\Documents\\6-MaestriWorkspaces\\pessoal\\02-projetos-dev\\03-vison\\release\\vison-0.1.0-local.zip",
+    "artifactZipSha256":  "158D28C3E9757526DE3B7B7DC7E50382F96ED08BBCF4FF43292AC64E26209033",
+    "manifest":  "C:\\Users\\user\\Documents\\6-MaestriWorkspaces\\pessoal\\02-projetos-dev\\03-vison\\release\\vison-0.1.0-local\\MANIFEST.sha256.json",
+    "manifestIntegrity":  "ALL_MANIFEST_ENTRIES_MATCH",
+    "zipContents":  "MATCHES_SNAPSHOT_FILES",
+    "snapshotEvidence":  {
+                             "test":  "npm.cmd test",
+                             "testResult":  "22/22 Node tests passed plus 7 deterministic assertions",
+                             "check":  "npm.cmd run check",
+                             "checkResult":  "exit 0"
+                         },
+    "gates":  {
+                  "G5":  "approved per user evidence",
+                  "G6":  "approved per user evidence",
+                  "G7":  "approved after local artifact and integrity verification"
+              },
+    "execution":  "Open index.html in a modern browser or serve the snapshot directory with a static local server; no build/install/network required.",
+    "rollback":  "Stop local server, then move/remove the local snapshot or ZIP as needed.",
+    "limitations":  [
+                        "No Git/checkout detected; no commit or tag created",
+                        "Interactive visual QA not executed in this developer run"
+                    ]
+}

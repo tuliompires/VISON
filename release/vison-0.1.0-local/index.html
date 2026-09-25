@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Vison — JSON Schema IDE">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Vison · JSON Schema IDE</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">V</span><div><strong>Vison</strong><small data-i18n="brandSubtitle">JSON Schema IDE</small></div></div>
+    <div class="toolbar" role="toolbar" data-i18n-aria-label="documentActions">
+      <button data-action="new" data-i18n-title="newSchema">＋ <span data-i18n="newSchema">New</span></button>
+      <button data-action="import" data-i18n-title="importSchema">↥ <span data-i18n="importSchema">Import</span></button>
+      <button data-action="export" data-i18n-title="exportJson">↧ <span data-i18n="exportJson">Export</span></button>
+      <button data-action="copy" data-i18n-title="copyJson">▣ <span data-i18n="copyJson">Copy</span></button>
+      <span class="toolbar-divider"></span>
+      <button data-action="undo" data-i18n-title="undo" data-i18n-aria-label="undo">↶</button>
+      <button data-action="redo" data-i18n-title="redo" data-i18n-aria-label="redo">↷</button>
+      <button data-action="clear" class="danger-ghost" data-i18n-title="clear"><span data-i18n="clear">Clear</span></button>
+      <label class="language-picker"><span data-i18n="language">Language</span><select id="language-select" data-i18n-aria-label="language" aria-label="Language"><option value="en-US">EN-US</option><option value="pt-BR">PT-BR</option></select></label>
+    </div>
+    <input id="file-input" type="file" accept=".json,application/json" hidden>
+  </header>
+  <main class="workspace" id="main-content">
+    <aside class="panel tree-panel" data-i18n-aria-label="structure">
+      <div class="panel-heading"><div><span class="eyebrow" data-i18n="structure">Structure</span><h2 data-i18n="schemaTree">Schema tree</h2></div><button data-action="add-root" class="icon-button" data-i18n-title="addProperty">＋</button></div>
+      <div id="tree" class="tree" role="tree" tabindex="0"></div>
+      <div class="tree-footer"><span id="node-count">0 nodes</span><span class="status-dot"></span><span data-i18n="savedLocally">Saved locally</span></div>
+    </aside>
+    <section class="panel inspector-panel" data-i18n-aria-label="inspector">
+      <div class="panel-heading"><div><span class="eyebrow" data-i18n="inspector">Inspector</span><h2 id="inspector-title" data-i18n="selectNode">Select a node</h2></div><span id="node-badge" class="type-badge">—</span></div>
+      <div id="inspector" class="inspector empty-state"><div class="empty-icon">◇</div><p data-i18n="chooseNode">Choose a node in the tree to edit its attributes.</p></div>
+    </section>
+    <section class="panel output-panel" data-i18n-aria-label="previewCode">
+      <div class="panel-heading output-heading"><div><span class="eyebrow" data-i18n="output">Output</span><h2 data-i18n="preview">Preview</h2></div><div class="segmented" role="tablist"><button class="active" data-tab="preview" role="tab" data-i18n="preview">Preview</button><button data-tab="code" role="tab" data-i18n="code">Code</button></div></div>
+      <div id="preview" class="preview"></div>
+      <pre id="code" class="code-view" hidden><code></code></pre>
+      <div id="messages" class="messages" aria-live="polite"></div>
+    </section>
+  </main>
+  <footer class="app-footer"><span data-i18n="footer">Vison v1.0 · JSON Schema Draft 2020-12</span><span data-i18n="shortcuts">Ctrl/Cmd + Z undo · Ctrl/Cmd + S export</span></footer>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

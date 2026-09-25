@@ -1,0 +1,32 @@
+{
+  "gate": "G8",
+  "result": "G8 APPROVED",
+  "verifiedAt": "2026-09-24",
+  "release": "0.1.0-local",
+  "scope": "documentation-only; no functional code changed",
+  "updatedDocuments": [
+    "README.md",
+    "CHANGELOG.md",
+    "RELEASE_NOTES.md",
+    "TRACEABILITY.md",
+    "release/G8-DOCUMENTATION-RECORD.json"
+  ],
+  "priorGates": {
+    "G5": "approved",
+    "G6": "approved",
+    "G7": "approved"
+  },
+  "evidence": {
+    "releaseRecord": "release/G7-RELEASE-RECORD.json",
+    "manifest": "release/vison-0.1.0-local/MANIFEST.sha256.json",
+    "automatedTestsRecordedByG7": "npm.cmd test - 7/7 passed",
+    "syntaxChecksRecordedByG7": "npm.cmd run check - exit 0",
+    "visualQA": "not claimed; remains Tester responsibility"
+  },
+  "functionalCodeChanged": false,
+  "notes": [
+    "Documentation records real G5/G6/G7 evidence only.",
+    "No visual QA result was invented.",
+    "No Git/SCM checkout or remote publication was detected."
+  ]
+}

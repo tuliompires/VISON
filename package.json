@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/run-tests.mjs && node --test tests/schema-tree-css.test.mjs tests/model-tree-operations.test.mjs tests/i18n.test.mjs tests/server.test.mjs tests/restore.test.mjs tests/import-security.test.mjs tests/security-controls.test.mjs tests/form-validation.test.mjs",
-    "check": "node --check js/app.js && node --check js/utils.js && node --check js/models/schema-model.js && node --check js/views/schema-view.js && node --check js/views/form-view.js && node --check js/controllers/app-controller.js && node --check js/services/form-validation.js && node --check js/services/storage-service.js && node --check server.mjs",
+    "test": "node tests/run-tests.mjs && node --test tests/schema-tree-css.test.mjs tests/model-tree-operations.test.mjs tests/i18n.test.mjs tests/server.test.mjs tests/restore.test.mjs tests/import-security.test.mjs tests/security-controls.test.mjs tests/form-validation.test.mjs tests/form-export.test.mjs",
+    "check": "node --check js/app.js && node --check js/utils.js && node --check js/models/schema-model.js && node --check js/views/schema-view.js && node --check js/views/form-view.js && node --check js/controllers/app-controller.js && node --check js/services/form-validation.js && node --check js/services/form-export.js && node --check js/services/storage-service.js && node --check server.mjs",
     "start": "node server.mjs"
   }
 }

@@ -68,7 +68,7 @@
             <details id="form-error-summary" class="form-error-summary" role="status" aria-live="polite" hidden></details>
             <div id="form-root"></div>
           </div>
-          <div class="form-actions"><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate">Validate form</button></div>
+          <div class="form-actions"><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate">Validate form</button><button id="form-export-open" class="form-submit form-export-open" type="button" data-i18n="formExportOpen" data-i18n-title="formExportOpen" data-i18n-aria-label="formExportOpen" disabled>Export form</button></div>
         </section>
       </div>
     </section>
@@ -77,5 +77,21 @@
   </main>
   <footer class="app-footer"><span data-i18n="footer">Vison v1.0 · JSON Schema Draft 2020-12</span><span data-i18n="shortcuts">Ctrl/Cmd + Z undo · Ctrl/Cmd + S export</span></footer>
   <script type="module" src="js/app.js"></script>
+  <div id="form-export-modal" class="form-export-modal" role="dialog" aria-modal="true" aria-labelledby="form-export-title" aria-describedby="form-export-description" hidden>
+    <section class="form-export-dialog">
+      <h2 id="form-export-title" data-i18n="formExportTitle">Export form</h2>
+      <p id="form-export-description" data-i18n="formExportDescription">Choose a format and file name for the current form values.</p>
+      <fieldset class="form-export-formats">
+        <legend data-i18n="formExportFormats">Formats</legend>
+        <label><input id="form-export-json" type="checkbox" class="vison-checkbox" value="json"><span data-i18n="formExportJson">JSON</span></label>
+        <label><input id="form-export-yaml" type="checkbox" class="vison-checkbox" value="yaml"><span data-i18n="formExportYaml">YAML</span></label>
+      </fieldset>
+      <label class="form-export-name-label" for="form-export-name" data-i18n="formExportName">File name</label>
+      <input id="form-export-name" class="form-export-name" type="text" data-i18n-placeholder="formExportNamePlaceholder" aria-describedby="form-export-name-help form-export-error">
+      <p id="form-export-name-help" class="form-export-help" data-i18n="formExportNameHelp">Leave empty to use a local timestamp.</p>
+      <p id="form-export-error" class="form-export-error" role="alert" aria-live="assertive" hidden></p>
+      <div class="form-export-actions"><button id="form-export-cancel" type="button" class="form-submit" data-i18n="formExportCancel">Cancel</button><button id="form-export-confirm" type="button" class="form-submit" data-i18n="formExportConfirm">Export</button></div>
+    </section>
+  </div>
 </body>
 </html>

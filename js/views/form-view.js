@@ -35,3 +35,8 @@ export class FormView{
 }
 
 export { generateUuidV4, isUuidEligible };
+
+FormView.prototype.getExportSnapshot=function(){return clone(this.values)};
+FormView.prototype.focusFirstError=function(){const control=this.root.querySelector('.has-error input,.has-error select');control?.focus();return control};
+const baseRefreshLanguage=FormView.prototype.refreshLanguage;
+FormView.prototype.refreshLanguage=function(){baseRefreshLanguage.call(this);if(this.exportErrorKey){const error=document.querySelector('#form-export-error');if(error){error.textContent=t(this.exportErrorKey,this.exportErrorVars||{});error.hidden=false}}};

@@ -1,0 +1,11 @@
+orquetracao:
+	projeto: vison
+	ajustes:
+		proporcionalidade: |
+			Implemente uma proporcionalidade de largura horizontal nos painés de ambas as abas, conforme segue:
+				- panel tree-panel e panel output-panel: 30% da largura da tela
+				- panel inspector-panel e panel code-panel: 70% da tela
+		identacao-visualizacao: |
+			Na aba Visualização, no panel output-panel, implemente uma identação nos itens exibidos, para separar visualmente pais, filhos, netos, bisnetos e assim por diante
+		nova-aba: |
+			Crie uma nova aba, que será utilizada para permitir carregar um schema e exibir os campos do schema carregado (qualquer que seja e que seja válido), mas já montando um formulário de cadastro mesmo, agrupando pais, filhos e netos visualmente e com validações dos campos requeridos, valores padrão e outras validações que constarem preenchidos no schema

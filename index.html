@@ -25,10 +25,13 @@
     <input id="file-input" type="file" accept=".json,application/json" hidden>
   </header>
   <main id="main-content">
-    <div class="main-tabs" role="tablist" data-i18n-aria-label="mainTabs">
+    <div class="main-shell">
+    <div class="main-tabs" role="tablist" aria-orientation="vertical" data-i18n-aria-label="mainTabs">
       <button id="assembly-tab" class="main-tab active" type="button" role="tab" aria-selected="true" aria-controls="assembly-panel" tabindex="0" data-i18n="assemblyTab">Assembly</button>
       <button id="visualization-tab" class="main-tab" type="button" role="tab" aria-selected="false" aria-controls="visualization-panel" tabindex="-1" data-i18n="visualizationTab">Visualization</button>
+      <button id="form-tab" class="main-tab" type="button" role="tab" aria-selected="false" aria-controls="form-panel" tabindex="-1" data-i18n="formTab">Form</button>
     </div>
+    <div class="tab-panels">
     <section id="assembly-panel" class="tab-panel" role="tabpanel" aria-labelledby="assembly-tab">
       <div class="workspace assembly-layout">
         <aside class="panel tree-panel" data-i18n-aria-label="structure">
@@ -55,6 +58,22 @@
         </aside>
       </div>
     </section>
+    <section id="form-panel" class="tab-panel" role="tabpanel" aria-labelledby="form-tab" hidden>
+      <div class="workspace form-layout">
+        <section class="panel form-panel" data-i18n-aria-label="formPanel">
+          <div class="panel-heading form-heading"><div><span class="eyebrow" data-i18n="formTab">Form</span><h2 data-i18n="formTitle">Schema form</h2></div><button type="button" class="form-load-button" data-action="form-load" data-i18n="formLoad" data-i18n-title="formLoad" data-i18n-aria-label="formLoad">Load schema</button><input id="form-file-input" type="file" accept=".json,application/json" hidden></div>
+          <p id="form-status" class="form-status" aria-live="polite" data-i18n="formLoadPrompt" hidden></p>
+          <p class="form-help" data-i18n="formScope" hidden></p>
+          <div class="form-content">
+            <details id="form-error-summary" class="form-error-summary" role="status" aria-live="polite" hidden></details>
+            <div id="form-root"></div>
+          </div>
+          <div class="form-actions"><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate">Validate form</button></div>
+        </section>
+      </div>
+    </section>
+    </div>
+    </div>
   </main>
   <footer class="app-footer"><span data-i18n="footer">Vison v1.0 · JSON Schema Draft 2020-12</span><span data-i18n="shortcuts">Ctrl/Cmd + Z undo · Ctrl/Cmd + S export</span></footer>
   <script type="module" src="js/app.js"></script>

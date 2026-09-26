@@ -38,6 +38,25 @@ test('schema tree separates identifiers and actions into two rows', () => {
   assert.match(css,/\.tree-row-main\{display:flex/); assert.match(css,/\.tree-row-actions\{display:flex/);
 });
 
+test('schema tree reserves one non-interactive toggle slot for every node', () => {
+  const view=fs.readFileSync(new URL('../js/views/schema-view.js', import.meta.url),'utf8');
+  assert.match(view,/const toggle=hasChildren\?el\('button'/);
+  assert.match(view,/:el\('span',\{class:'tree-toggle-placeholder','aria-hidden':'true'\}\)/);
+  assert.match(view,/main\.append\(toggle,el\('span',\{class:`type-dot/);
+  assert.doesNotMatch(view,/tree-toggle-placeholder[^\n]*tabIndex/);
+  assert.match(css,/\.tree-row-main\{[^}]*--tree-toggle-slot:18px[^}]*grid-template-columns:var\(--tree-toggle-slot\) var\(--tree-marker-slot\) minmax\(0,1fr\) minmax\(0,max-content\)/);
+  assert.match(css,/\.tree-toggle,\.tree-toggle-placeholder\{[^}]*width:var\(--tree-toggle-slot\)[^}]*min-width:var\(--tree-toggle-slot\)/);
+  assert.match(css,/\.tree-toggle-placeholder\{[^}]*pointer-events:none/);
+});
+
+test('tree row actions remain bounded and responsive without changing hierarchy indent', () => {
+  const view=fs.readFileSync(new URL('../js/views/schema-view.js', import.meta.url),'utf8');
+  assert.match(view,/row\.append\(actions\)/); assert.match(view,/role:'group'/); assert.match(view,/hidden:!expanded/);
+  assert.match(css,/\.tree-row-actions\{[^}]*flex-wrap:wrap[^}]*min-width:0[^}]*max-width:100%[^}]*overflow:hidden/);
+  assert.match(css,/\.tree-children\{padding-left:17px;border-left:1px solid #2d3a4e;margin-left:15px\}/);
+  assert.match(css,/@media\(max-width:650px\)\{\.tree-row-main\{[^}]*grid-template-columns:var\(--tree-toggle-slot\)/);
+});
+
 test('delete confirmation dialog has safe accessible defaults', () => {
   const view=fs.readFileSync(new URL('../js/views/schema-view.js', import.meta.url),'utf8');
   const controller=fs.readFileSync(new URL('../js/controllers/app-controller.js', import.meta.url),'utf8');

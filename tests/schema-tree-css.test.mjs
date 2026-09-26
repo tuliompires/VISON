@@ -82,13 +82,16 @@ test('tree expansion remains presentation-only for CA-05 and CA-06', () => {
 test('main tabs provide the approved CA-01 through CA-08 hierarchy', () => {
   const index=fs.readFileSync(new URL('../index.html', import.meta.url),'utf8');
   assert.equal((index.match(/role="tablist"/g)||[]).length,1);
-  assert.equal((index.match(/role="tab"/g)||[]).length,2);
+  assert.equal((index.match(/role="tab"/g)||[]).length,3);
   assert.match(index,/id="main-content"[\s\S]*class="main-tabs"/);
+  assert.match(index,/class="main-shell"[\s\S]*class="main-tabs"[\s\S]*class="tab-panels"/);
+  assert.match(index,/class="main-tabs"[^>]*aria-orientation="vertical"/);
   assert.match(index,/id="assembly-panel"[\s\S]*tree-panel[\s\S]*inspector-panel/);
   assert.match(index,/id="visualization-panel"[\s\S]*output-panel[\s\S]*code-panel/);
   assert.match(index,/id="assembly-tab"[^>]*aria-selected="true"[^>]*aria-controls="assembly-panel"[^>]*tabindex="0"/);
   assert.match(index,/id="visualization-tab"[^>]*aria-selected="false"[^>]*aria-controls="visualization-panel"[^>]*tabindex="-1"/);
   assert.match(index,/id="visualization-panel"[^>]*hidden/);
+  assert.match(index,/id="form-panel"[^>]*hidden/);
 });
 
 test('main tabs remove the legacy Preview/Code controls and preserve unique output IDs', () => {
@@ -101,7 +104,8 @@ test('main tabs remove the legacy Preview/Code controls and preserve unique outp
 
 test('main tabs implement CA-09 through CA-13 keyboard and focus semantics', () => {
   const controller=fs.readFileSync(new URL('../js/controllers/app-controller.js', import.meta.url),'utf8');
-  assert.match(controller,/ArrowRight|ArrowDown/); assert.match(controller,/ArrowLeft|ArrowUp/);
+  assert.match(controller,/e\.key==='ArrowDown'/); assert.match(controller,/e\.key==='ArrowUp'/);
+  assert.match(controller,/isMobile\(\)&&e\.key==='ArrowRight'/); assert.match(controller,/isMobile\(\)&&e\.key==='ArrowLeft'/);
   assert.match(controller,/e\.key==='Home'/); assert.match(controller,/e\.key==='End'/);
   assert.match(controller,/e\.key==='Enter'\|\|e\.key===' '/); assert.match(controller,/tab\.tabIndex=selected\?0:-1/);
   assert.match(controller,/panel\.hidden=!selected/); assert.match(controller,/active\.focus\(\)/);
@@ -109,25 +113,73 @@ test('main tabs implement CA-09 through CA-13 keyboard and focus semantics', () 
 
 test('main tab CSS covers CA-14 and CA-15 responsive layout and visible focus', () => {
   assert.match(css,/\.main-tabs\{/); assert.match(css,/\.main-tab:focus-visible/);
-  assert.match(css,/\.assembly-layout\{grid-template-columns:minmax\(0,1fr\)/);
-  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
+  assert.match(css,/\.main-shell\{display:grid;grid-template-columns:minmax\(150px,190px\)/);
+  assert.match(css,/\.main-tabs\{display:flex;flex-direction:column/);
+  assert.match(css,/\.tab-panels\{display:flex;flex:1 1 0%/);
+  assert.match(css,/@media\(max-width:650px\)\{\s*\.main-shell\{display:flex;flex-direction:column\}/);
+  assert.match(css,/\.assembly-layout\{grid-template-columns:minmax\(0,3fr\)/);
+  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,3fr\) minmax\(0,7fr\)/);
   assert.match(css,/@media\(max-width:950px\)\{\.assembly-layout,\.visualization-layout\{grid-template-columns:minmax\(0,1fr\)/);
   assert.match(css,/@media\(max-width:650px\)/);
 });
 
 test('assembly and visualization panel pairs use equal desktop columns', () => {
-  assert.match(css,/\.assembly-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
-  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\)/);
+  assert.match(css,/\.assembly-layout\{grid-template-columns:minmax\(0,3fr\) minmax\(0,7fr\)/);
+  assert.match(css,/\.visualization-layout\{grid-template-columns:minmax\(0,3fr\) minmax\(0,7fr\)/);
+});
+
+test('form layout uses one full-width panel and keeps responsive padding', () => {
+  assert.match(css,/\.form-layout\{grid-template-columns:minmax\(0,1fr\);width:100%;max-width:none;margin:0;\}/);
+  assert.match(css,/\.form-layout \.form-panel\{width:100%;\}/);
+  assert.match(css,/\.assembly-layout,\.visualization-layout,\.form-layout\{padding:10px\}/);
+  const index=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  assert.match(index,/id="form-panel"[\s\S]*class="workspace form-layout"[\s\S]*class="panel form-panel"/);
 });
 
 test('output rows group name and type, then wrap the description safely', () => {
   const view=fs.readFileSync(new URL('../js/views/schema-view.js',import.meta.url),'utf8');
   assert.match(view,/class:'preview-row-main'/);
   assert.match(view,/class:'preview-row-description'/);
-  assert.match(view,/typeLabel\(v\.type\)/);
-  assert.match(view,/v\.description\|\|'—'/);
+  assert.match(view,/typeLabel\(node\.type\)/);
+  assert.match(view,/node\.description\|\|'—'/);
   assert.doesNotMatch(view,/innerHTML/);
   assert.match(css,/\.preview-row\{[^}]*min-width:0/);
   assert.match(css,/\.preview-row-main\{[^}]*min-width:0/);
   assert.match(css,/\.preview-row-description\{[^}]*overflow-wrap:anywhere/);
+});
+
+test('form tab and panel expose the required accessible structure', () => {
+  const index=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  assert.match(index,/id="form-tab"[^>]*role="tab"[^>]*aria-controls="form-panel"/);
+  assert.match(index,/id="form-panel"[^>]*role="tabpanel"[^>]*aria-labelledby="form-tab"[^>]*hidden/);
+  assert.match(index,/id="form-file-input"/); assert.match(index,/id="form-root"/);
+  const controller=fs.readFileSync(new URL('../js/controllers/app-controller.js',import.meta.url),'utf8');
+  assert.match(controller,/form-tab|bindForm/); assert.match(controller,/form-file-input|formView/);
+});
+
+test('preview recursively carries structural depth', () => {
+  const view=fs.readFileSync(new URL('../js/views/schema-view.js',import.meta.url),'utf8');
+  assert.match(view,/dataset:\{depth/); assert.match(view,/renderPreviewRows|walk/);
+  assert.match(css,/\.preview-row\[data-depth\]/);
+});
+
+test('desktop shell keeps document fixed and panel scrolling internal', () => {
+  assert.match(css,/html,body\{height:100%;overflow:hidden\}/);
+  assert.match(css,/#main-content\{display:flex;flex:1 1 0%/);
+  assert.match(css,/\.tab-panel\{display:flex;flex:1 1 0%/);
+  assert.match(css,/\.tab-panel\[hidden\]\{display:none\}/);
+  assert.match(css,/\.workspace\{height:auto;min-height:0;flex:1 1 auto;width:100%\}/);
+});
+
+test('form schema loader is unique, translated and placed in the panel heading', () => {
+  const index=fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  assert.equal((index.match(/data-action="form-load"/g)||[]).length,1);
+  assert.equal((index.match(/id="form-file-input"/g)||[]).length,1);
+  assert.match(index,/class="panel-heading form-heading"[\s\S]*data-action="form-load"[\s\S]*id="form-file-input"/);
+  assert.doesNotMatch(index,/class="form-toolbar"/);
+  assert.match(index,/data-i18n="formLoad"/);
+  assert.match(index,/data-i18n-title="formLoad"/);
+  assert.match(index,/data-i18n-aria-label="formLoad"/);
+  assert.match(css,/\.form-load-button\{[^}]*width:max-content[^}]*cursor:pointer/);
+  assert.match(css,/\.form-load-button:hover/); assert.match(css,/\.form-load-button:focus-visible/);
 });

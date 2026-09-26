@@ -17,3 +17,18 @@ test('import path uses bounded parser and server security headers', () => {
   assert.match(server, /Content-Security-Policy/);
   assert.match(server, /X-Frame-Options/);
 });
+
+test('file flows reject oversized files before FileReader.readAsText', () => {
+  const controller = fs.readFileSync(new URL('../js/controllers/app-controller.js', import.meta.url), 'utf8');
+  assert.match(controller, /MAX_IMPORT_BYTES/);
+  assert.match(controller, /file\.size\s*>\s*MAX_IMPORT_BYTES/);
+  assert.match(controller, /form-file-input/);
+});
+
+test('property names reject ambiguous and prototype-sensitive paths', async () => {
+  const { validateSchema } = await import('../js/utils.js?security-names');
+  for (const name of ['a.b', '0', '__proto__', 'constructor']) {
+    const errors=validateSchema({type:'object',properties:{[name]:{type:'string'}}});
+    assert.ok(errors.some(error=>/propriedade|nome|seguro|suport/i.test(error)), `expected rejection for ${name}`);
+  }
+});

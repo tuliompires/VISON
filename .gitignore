@@ -6,3 +6,7 @@ coverage/
 dist/
 .DS_Store
 artifacts-*.txt
+
+# Workflow artifacts kept locally and intentionally outside Git tracking.
+/tickets/
+/ai_changes/

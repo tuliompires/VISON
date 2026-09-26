@@ -1,5 +1,0 @@
-orquetracao:
-	projeto: vison
-	ajustes:
-		commit inicial: |
-			orquestre com os agentes que achar necessário, mas inclua obrigatoriamente o information_security nesta demanda, para que seja criado o primeiro PR deste repositório

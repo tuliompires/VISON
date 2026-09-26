@@ -1,0 +1,81 @@
+"wf-agents": {
+  "$schema": "https://json-schema.org",
+  "title": "AgentsList",
+  "schemaVersion": 1,
+  "description": "Lista de agentes configurados no workflow.",
+  "type": "array",
+  "items": {
+	"schemaVersion": 1,
+	"type": "object",
+	"properties": {
+	  "ag-id": {
+		"schemaVersion": 1,
+		"description": "Identificador único do agente (ex: orchestrator).",
+		"type": "string"
+	  },
+	  "ag-name": {
+		"schemaVersion": 1,
+		"description": "Nome amigável ou exibível do agente.",
+		"type": "string"
+	  },
+	  "ag-skills": {
+		"schemaVersion": 1,
+		"description": "Lista de caminhos para os arquivos markdown de skills que o agente pode executar.",
+		"type": "array",
+		"items": {
+		  "schemaVersion": 1,
+		  "type": "string"
+		}
+	  },
+	  "ag-input": {
+		"schemaVersion": 1,
+		"description": "Dados ou informações de entrada para o agente.",
+		"type": "string"
+	  },
+	  "ag-processing": {
+		"schemaVersion": 1,
+		"description": "Dados ou informações de processamento para o agente.",
+		"type": "string"
+	  },
+	  "ag-output": {
+		"schemaVersion": 1,
+		"description": "Dados ou informações de saída para o agente.",
+		"type": "string"
+	  },
+	  "ag-events": {
+		"schemaVersion": 1,
+		"description": "Lista de eventos que o agente pode emitir.",
+		"type": "array",
+		"items": {
+		  "schemaVersion": 1,
+		  "type": "object",
+		  "properties": {
+			"ev-id": {
+			  "schemaVersion": 1,
+			  "description": "Identificador único do evento.",
+			  "type": "string"
+			},
+			"ev-name": {
+			  "schemaVersion": 1,
+			  "description": "Nome do evento.",
+			  "type": "string"
+			},
+			"ev-description": {
+			  "schemaVersion": 1,
+			  "description": "Descrição do evento.",
+			  "type": "string"
+			}
+		  }
+		}
+	  }
+	},
+	"required": [
+	  "ag-id",
+	  "ag-name",
+	  "ag-skills",
+	  "ag-input",
+	  "ag-processing",
+	  "ag-output"
+	]
+  }
+}

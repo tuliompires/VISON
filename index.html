@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-US">
+<html lang="en-US" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -11,29 +11,38 @@
 <body>
   <header class="topbar">
     <div class="brand"><span class="brand-mark">V</span><div><strong>Vison</strong><small data-i18n="brandSubtitle">JSON Schema IDE</small></div></div>
-    <div class="toolbar" role="toolbar" data-i18n-aria-label="documentActions">
-      <button data-action="new" data-i18n-title="newSchema">＋ <span data-i18n="newSchema">New</span></button>
-      <button data-action="import" data-i18n-title="importSchema">↥ <span data-i18n="importSchema">Import</span></button>
-      <button data-action="export" data-i18n-title="exportJson">↧ <span data-i18n="exportJson">Export</span></button>
-      <button data-action="copy" data-i18n-title="copyJson">▣ <span data-i18n="copyJson">Copy</span></button>
-      <span class="toolbar-divider"></span>
-      <button data-action="undo" data-i18n-title="undo" data-i18n-aria-label="undo">↶</button>
-      <button data-action="redo" data-i18n-title="redo" data-i18n-aria-label="redo">↷</button>
-      <button data-action="clear" class="danger-ghost" data-i18n-title="clear"><span data-i18n="clear">Clear</span></button>
+    <div class="toolbar" role="toolbar" data-i18n-aria-label="globalPreferences">
       <label class="language-picker"><span data-i18n="language">Language</span><select id="language-select" data-i18n-aria-label="language" aria-label="Language"><option value="en-US">EN-US</option><option value="pt-BR">PT-BR</option></select></label>
+      <label class="theme-picker"><span data-i18n="theme">Theme</span><select id="theme-select" data-i18n-aria-label="theme"><option value="dark" data-i18n="themeDark">Dark</option><option value="light" data-i18n="themeLight">Light</option></select></label>
     </div>
     <input id="file-input" type="file" accept=".json,application/json" hidden>
   </header>
   <main id="main-content">
     <div class="main-shell">
     <div class="main-tabs" role="tablist" aria-orientation="vertical" data-i18n-aria-label="mainTabs">
-      <button id="assembly-tab" class="main-tab active" type="button" role="tab" aria-selected="true" aria-controls="assembly-panel" tabindex="0" data-i18n="assemblyTab">Assembly</button>
-      <button id="visualization-tab" class="main-tab" type="button" role="tab" aria-selected="false" aria-controls="visualization-panel" tabindex="-1" data-i18n="visualizationTab">Visualization</button>
+      <button id="construction-toggle" class="construction-toggle" type="button" aria-expanded="true" aria-controls="construction-tabs" data-i18n="constructionGroup">Construction</button>
+      <div id="construction-tabs" class="construction-tabs" role="group" data-i18n-aria-label="constructionGroup">
+        <button id="assembly-tab" class="main-tab active" type="button" role="tab" aria-selected="true" aria-controls="assembly-panel" tabindex="0" data-i18n="assemblyTab">Assembly</button>
+        <button id="visualization-tab" class="main-tab" type="button" role="tab" aria-selected="false" aria-controls="visualization-panel" tabindex="-1" data-i18n="visualizationTab">Visualization</button>
+      </div>
       <button id="form-tab" class="main-tab" type="button" role="tab" aria-selected="false" aria-controls="form-panel" tabindex="-1" data-i18n="formTab">Form</button>
     </div>
     <div class="tab-panels">
     <section id="assembly-panel" class="tab-panel" role="tabpanel" aria-labelledby="assembly-tab">
       <div class="workspace assembly-layout">
+        <section id="document-context" class="document-context panel" data-i18n-aria-label="documentContext">
+          <div class="document-context-heading"><span class="eyebrow" data-i18n="documentContext">Document context</span><strong id="document-source" data-i18n="unsavedFile">File not saved yet</strong></div>
+          <div class="document-actions" role="toolbar" data-i18n-aria-label="documentActions">
+            <button data-action="new" data-i18n-title="newSchema">＋ <span data-i18n="newSchema">New</span></button>
+            <button data-action="import" data-i18n-title="importSchema">↥ <span data-i18n="importSchema">Import</span></button>
+            <button data-action="export" data-i18n-title="exportJson">↧ <span data-i18n="exportJson">Export</span></button>
+            <button data-action="copy" data-i18n-title="copyJson">▣ <span data-i18n="copyJson">Copy</span></button>
+            <span class="toolbar-divider" aria-hidden="true"></span>
+            <button data-action="undo" data-i18n-title="undo" data-i18n-aria-label="undo">↶</button>
+            <button data-action="redo" data-i18n-title="redo" data-i18n-aria-label="redo">↷</button>
+            <button data-action="clear" class="danger-ghost" data-i18n-title="clear"><span data-i18n="clear">Clear</span></button>
+          </div>
+        </section>
         <aside class="panel tree-panel" data-i18n-aria-label="structure">
           <div class="panel-heading"><div><span class="eyebrow" data-i18n="structure">Structure</span><h2 data-i18n="schemaTree">Schema tree</h2></div><button data-action="add-root" class="icon-button" data-i18n-title="addProperty">＋</button></div>
           <div id="tree" class="tree" role="tree" tabindex="0"></div>
@@ -68,7 +77,7 @@
             <details id="form-error-summary" class="form-error-summary" role="status" aria-live="polite" hidden></details>
             <div id="form-root"></div>
           </div>
-          <div class="form-actions"><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate">Validate form</button><button id="form-export-open" class="form-submit form-export-open" type="button" data-i18n="formExportOpen" data-i18n-title="formExportOpen" data-i18n-aria-label="formExportOpen" disabled>Export form</button></div>
+          <div class="form-actions"><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate" disabled aria-disabled="true">Validate form</button><button id="form-export-open" class="form-submit form-export-open" type="button" data-i18n="formExportOpen" data-i18n-title="formExportOpen" data-i18n-aria-label="formExportOpen" disabled>Export form</button></div>
         </section>
       </div>
     </section>

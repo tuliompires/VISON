@@ -80,7 +80,8 @@
 .code-panel{display:flex;flex-direction:column}
 .code-panel .code-view{height:calc(100% - 70px);min-height:0;flex:1}
 .visualization-layout .preview{height:calc(100% - 70px)}
-@media(max-width:950px){.assembly-layout,.visualization-layout{grid-template-columns:minmax(0,1fr);}.visualization-layout .output-panel,.visualization-layout .code-panel{height:500px}.visualization-layout .code-panel{grid-row:2}}
+@media(max-width:950px){.assembly-layout,.visualization-layout{grid-template-columns:minmax(0,1fr);}.visualization-layout .output-panel,.visualization-layout .code-panel{height:500px}}
+@media(min-width:651px) and (max-width:950px){.assembly-layout,.visualization-layout{grid-template-rows:max-content minmax(500px,max-content) minmax(500px,max-content)}.assembly-layout>.tree-panel,.assembly-layout>.inspector-panel,.visualization-layout>.output-panel,.visualization-layout>.code-panel{height:500px;min-height:500px}}
 @media(max-width:650px){.main-tabs{padding-left:10px;padding-right:10px}.main-tab{flex:1;padding:10px 8px}.assembly-layout,.visualization-layout,.form-layout{padding:10px}.visualization-layout .output-panel,.visualization-layout .code-panel{height:430px}}
 .tree-row-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:5px;min-width:0;max-width:100%;min-height:22px;padding-top:4px;overflow:hidden}
 
@@ -215,7 +216,28 @@ body{background:var(--surface-page);color:var(--text-primary)}
 
 /* Keep the context row intrinsic and give the work surfaces the remaining height. */
 .assembly-layout,.visualization-layout{grid-template-rows:max-content minmax(0,1fr)}
-.visualization-layout>.document-context{min-height:0;padding-block:8px}
-.visualization-layout>.document-context .document-actions{align-self:center}
 @media(max-width:950px){.assembly-layout,.visualization-layout{grid-template-rows:max-content minmax(0,1fr)}}
-@media(max-width:650px){.visualization-layout>.document-context{padding-block:8px}.visualization-layout>.document-context .document-actions{align-self:stretch}}
+@media(max-width:650px){.assembly-layout>.document-context,.visualization-layout>.document-context{padding-block:8px}.assembly-layout>.document-context .document-actions,.visualization-layout>.document-context .document-actions{align-self:stretch}}
+
+/* Ticket 25: one context contract and complete semantic tree-action states. */
+:root,[data-theme="dark"]{--tree-action-text:#aebbd0;--tree-action-border:#3a485e;--tree-action-surface:#1a2432;--tree-action-hover-text:#ffffff;--tree-action-hover-border:#a99cff;--tree-action-hover-surface:#302c59;--tree-action-active-surface:#252044;--tree-focus-ring:#a99cff;--tree-focus-shadow:#a99cff55;--tree-disabled-text:#7d899b;--tree-disabled-border:#293446;--tree-disabled-surface:#151b25;--tree-add-text:#8ff1d5;--tree-add-border:#2b9c81;--tree-add-surface:#18352f;--tree-add-hover-text:#d8fff4;--tree-add-hover-border:#42d9b3;--tree-add-hover-surface:#245447;--tree-duplicate-text:#a9ccff;--tree-duplicate-border:#527fc2;--tree-duplicate-surface:#1b2d45;--tree-duplicate-hover-text:#e2edff;--tree-duplicate-hover-border:#75a7ff;--tree-duplicate-hover-surface:#2a4163;--tree-delete-text:#ffb8c4;--tree-delete-border:#d66a7d;--tree-delete-surface:#3a202c;--tree-delete-hover-text:#ffffff;--tree-delete-hover-border:#ff8fa3;--tree-delete-hover-surface:#5b2134}
+[data-theme="light"]{--tree-action-text:#334155;--tree-action-border:#aebbd0;--tree-action-surface:#eef2f7;--tree-action-hover-text:#20204f;--tree-action-hover-border:#4e45b8;--tree-action-hover-surface:#e7e5fb;--tree-action-active-surface:#dcd9f5;--tree-focus-ring:#4e45b8;--tree-focus-shadow:#4e45b855;--tree-disabled-text:#718096;--tree-disabled-border:#d8dee8;--tree-disabled-surface:#f3f5f8;--tree-add-text:#075f51;--tree-add-border:#087e69;--tree-add-surface:#e2f5ef;--tree-add-hover-text:#06483e;--tree-add-hover-border:#056b5b;--tree-add-hover-surface:#cceee4;--tree-duplicate-text:#1d4f91;--tree-duplicate-border:#527fc2;--tree-duplicate-surface:#e6efff;--tree-duplicate-hover-text:#143968;--tree-duplicate-hover-border:#2f65a8;--tree-duplicate-hover-surface:#d3e4fb;--tree-delete-text:#9f1d3b;--tree-delete-border:#b53650;--tree-delete-surface:#fdecef;--tree-delete-hover-text:#7c1530;--tree-delete-hover-border:#9f1d3b;--tree-delete-hover-surface:#f8d8df}
+.assembly-layout>.document-context,.visualization-layout>.document-context{min-height:0;padding-block:8px;align-items:center}
+.assembly-layout>.document-context .document-actions,.visualization-layout>.document-context .document-actions{align-self:center}
+.tree-action,.tree-delete{color:var(--tree-action-text);background:var(--tree-action-surface);border:1px solid var(--tree-action-border);box-shadow:none;opacity:1}
+.tree-action:hover,.tree-delete:hover{color:var(--tree-action-hover-text);background:var(--tree-action-hover-surface);border-color:var(--tree-action-hover-border)}
+.tree-action:active,.tree-delete:active{color:var(--tree-action-hover-text);background:var(--tree-action-active-surface);border-color:var(--tree-action-hover-border);transform:translateY(1px)}
+.tree-action:focus-visible,.tree-delete:focus-visible,.tree-toggle:focus-visible{color:var(--tree-action-hover-text);outline:2px solid var(--tree-focus-ring);outline-offset:2px;box-shadow:0 0 0 3px var(--tree-focus-shadow)}
+.tree-action:disabled,.tree-delete:disabled,.tree-toggle:disabled{color:var(--tree-disabled-text);background:var(--tree-disabled-surface);border-color:var(--tree-disabled-border);cursor:not-allowed;opacity:1;box-shadow:none}
+.tree-action[data-action="tree-add-child"]{color:var(--tree-add-text);background:var(--tree-add-surface);border-color:var(--tree-add-border)}
+.tree-action[data-action="tree-add-child"]:hover,.tree-action[data-action="tree-add-child"]:active{color:var(--tree-add-hover-text);background:var(--tree-add-hover-surface);border-color:var(--tree-add-hover-border)}
+.tree-action[data-action="tree-duplicate"]{color:var(--tree-duplicate-text);background:var(--tree-duplicate-surface);border-color:var(--tree-duplicate-border)}
+.tree-action[data-action="tree-duplicate"]:hover,.tree-action[data-action="tree-duplicate"]:active{color:var(--tree-duplicate-hover-text);background:var(--tree-duplicate-hover-surface);border-color:var(--tree-duplicate-hover-border)}
+.tree-action[data-action="tree-add-child"]:disabled,.tree-action[data-action="tree-duplicate"]:disabled{color:var(--tree-disabled-text);background:var(--tree-disabled-surface);border-color:var(--tree-disabled-border)}
+.tree-delete{color:var(--tree-delete-text);background:var(--tree-delete-surface);border-color:var(--tree-delete-border)}
+.tree-delete:hover,.tree-delete:active{color:var(--tree-delete-hover-text);background:var(--tree-delete-hover-surface);border-color:var(--tree-delete-hover-border)}
+.tree-delete:disabled{color:var(--tree-disabled-text);background:var(--tree-disabled-surface);border-color:var(--tree-disabled-border)}
+.tree-toggle{color:var(--tree-action-text);background:transparent;border-color:transparent;box-shadow:none}
+.tree-toggle:hover,.tree-toggle:active{color:var(--tree-action-hover-text);background:var(--tree-action-hover-surface);border-color:var(--tree-action-hover-border)}
+.tree-toggle:disabled{background:transparent;border-color:transparent}
+.trash-icon{color:currentColor;stroke:currentColor}

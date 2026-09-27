@@ -54,7 +54,7 @@ test('final cascade covers dynamic FormView, export, state and focus selectors',
 
 test('visualization context uses an intrinsic row and preserves content flex', () => {
   assert.match(css, /\.assembly-layout,\.visualization-layout\{grid-template-rows:max-content minmax\(0,1fr\)\}/);
-  assert.match(css, /\.visualization-layout>\.document-context\{min-height:0;padding-block:8px\}/);
+  assert.match(css, /\.assembly-layout>\.document-context,\.visualization-layout>\.document-context\{min-height:0;padding-block:8px/);
   assert.match(css, /\.visualization-layout\{grid-template-columns:minmax\(0,3fr\) minmax\(0,7fr\)/);
   assert.match(css, /\.document-actions\{display:flex[^}]*flex-wrap:wrap/);
 });

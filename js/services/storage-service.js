@@ -12,4 +12,6 @@ export const storageService={
  clear(){try{localStorage.removeItem(KEY);return report('clear',true,t('storageCleared'))}catch(error){return report('clear',false,t('storageClearFailed'),error)}}
 };
 export async function copyText(text){if(navigator.clipboard?.writeText)return navigator.clipboard.writeText(text);const area=document.createElement('textarea');area.value=text;document.body.append(area);area.select();document.execCommand('copy');area.remove()}
-export function downloadJson(schema){const blob=new Blob([JSON.stringify(schema,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='schema.json';a.click();URL.revokeObjectURL(url)}
+// O modelo/árvore já foi ordenado pela fonte visual; este serializer não reordena chaves.
+export function serializeSchemaJson(schema){return JSON.stringify(schema,null,2)}
+export function downloadJson(schema){const blob=new Blob([serializeSchemaJson(schema)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='schema.json';a.click();URL.revokeObjectURL(url)}

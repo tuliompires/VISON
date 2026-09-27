@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import test from 'node:test';
 import { buildExportFiles, normalizeExportName, normalizeFormats, readFormatPreference, serializeJson, serializeYaml, suggestExportName, writeFormatPreference } from '../js/services/form-export.js';
+import { FormView } from '../js/views/form-view.js';
 import { setLanguage, t } from '../js/i18n.js';
 
 test('form export serializes a snapshot as readable JSON and safe deterministic YAML',()=>{
@@ -41,9 +42,25 @@ test('form export DOM contract, focus and privacy hooks are present',()=>{
   const css=fs.readFileSync(new URL('../css/style.css',import.meta.url),'utf8');
   assert.match(index,/id="form-export-open"[^>]*disabled/);assert.match(index,/id="form-export-modal"[^>]*role="dialog"[^>]*aria-modal="true"/);
   assert.match(index,/aria-labelledby="form-export-title"[^>]*aria-describedby="form-export-description"/);assert.match(index,/id="form-export-json"/);assert.match(index,/id="form-export-yaml"/);assert.match(index,/id="form-export-name"/);
-  assert.match(controller,/elements\.confirm\.focus\(\)/);assert.match(controller,/event\.key==='Escape'/);assert.match(controller,/this\.closeFormExport\(true\)/);assert.match(controller,/clone\(this\.formView\.values\)/);assert.match(controller,/URL\.revokeObjectURL/);assert.match(controller,/writeFormatPreference\(formats\)/);
+  assert.match(controller,/elements\.confirm\.focus\(\)/);assert.match(controller,/event\.key==='Escape'/);assert.match(controller,/this\.closeFormExport\(true\)/);assert.match(controller,/getExportSnapshot\(\)/);assert.match(controller,/URL\.revokeObjectURL/);assert.match(controller,/writeFormatPreference\(formats\)/);
   assert.match(view,/getExportSnapshot|exportErrorKey/);assert.match(css,/\.form-export-modal\[hidden\]\{display:none\}/);assert.match(css,/\.form-export-dialog\{[^}]*max-height:min\(100%,680px\)[^}]*overflow:auto/);
   assert.doesNotMatch(controller,/localStorage.*values|localStorage.*schema/);
+});
+
+test('form export snapshot follows visual schema order recursively and preserves falsy values',()=>{
+  const schema={type:'object',properties:{zeta:{type:'string'},alpha:{type:'object',properties:{middle:{type:'number'},zero:{type:'number'},nil:{type:'null'},flag:{type:'boolean'}}},items:{type:'array',items:{type:'object',properties:{zeta:{type:'string'},alpha:{type:'boolean'}}}}}};
+  const values={items:[{alpha:false,zeta:'item'}],alpha:{flag:false,nil:null,zero:0,middle:3},zeta:'top'};
+  const snapshot=FormView.prototype.getExportSnapshot.call({schema,values});
+  assert.deepEqual(Object.keys(snapshot),['zeta','alpha','items']);
+  assert.deepEqual(Object.keys(snapshot.alpha),['middle','zero','nil','flag']);
+  assert.deepEqual(Object.keys(snapshot.items[0]),['zeta','alpha']);
+  assert.equal(snapshot.alpha.zero,0);assert.equal(snapshot.alpha.nil,null);assert.equal(snapshot.alpha.flag,false);
+  const scalarArraySchema={type:'array',items:{type:'string'}};
+  const scalarArraySnapshot=FormView.prototype.getExportSnapshot.call({schema:scalarArraySchema,values:['a',undefined,null,false]});
+  assert.deepEqual(scalarArraySnapshot,['a',null,null,false]);
+  assert.equal(scalarArraySnapshot.includes(undefined),false);
+  assert.deepEqual(Object.keys(JSON.parse(serializeJson(snapshot))),Object.keys(snapshot));
+  const yaml=serializeYaml(snapshot);assert.ok(yaml.indexOf('"zeta"')<yaml.indexOf('"alpha"'));assert.ok(yaml.indexOf('"middle"')<yaml.indexOf('"zero"'));
 });
 
 test('form export strings are available in both languages',()=>{

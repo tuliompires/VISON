@@ -3,11 +3,22 @@ import fs from 'node:fs';
 import test from 'node:test';
 import { AppController } from '../js/controllers/app-controller.js';
 import { SchemaModel } from '../js/models/schema-model.js';
+import { serializeSchemaJson } from '../js/services/storage-service.js';
 import { nodesToSchema, schemaToNodes, validateSchema } from '../js/utils.js';
 
 const draft = 'https://json-schema.org/draft/2020-12/schema';
 
 const exportSchema = schema => nodesToSchema(schemaToNodes(schema));
+
+test('ticket 26 G4: download e cÃ³pia usam o mesmo serializer JSON', () => {
+  const schema = exportSchema({ type: 'object', properties: { zeta: { type: 'string' }, alpha: { type: 'number' } } });
+  const expected = serializeSchemaJson(schema);
+  const storage = fs.readFileSync(new URL('../js/services/storage-service.js', import.meta.url), 'utf8');
+  const controller = fs.readFileSync(new URL('../js/controllers/app-controller.js', import.meta.url), 'utf8');
+  assert.equal(JSON.stringify(JSON.parse(expected)), JSON.stringify(schema));
+  assert.match(storage, /new Blob\(\[serializeSchemaJson\(schema\)\]/);
+  assert.match(controller, /copyText\(serializeSchemaJson\(this\.model\.schema\(\)\)\)/);
+});
 
 test('ticket 26: default-parameters preserva as irmãs ai-model e ai-effort em items', () => {
   const input = { $schema: draft, schemaVersion: 1, title: 'default-parameters', type: 'array', items: {
@@ -17,8 +28,8 @@ test('ticket 26: default-parameters preserva as irmãs ai-model e ai-effort em i
     }, required: ['ai-model', 'ai-effort']
   } };
   const output = exportSchema(input);
-  assert.deepEqual(Object.keys(output.items.properties), ['ai-effort', 'ai-model']);
-  assert.deepEqual(output.items.required, ['ai-effort', 'ai-model']);
+  assert.deepEqual(Object.keys(output.items.properties), ['ai-model', 'ai-effort']);
+  assert.deepEqual(output.items.required, ['ai-model', 'ai-effort']);
   assert.equal(output.items.properties['ai-model'].type, 'string');
   assert.equal(output.items.properties['ai-effort'].type, 'string');
 });
@@ -27,8 +38,8 @@ test('ticket 26: propriedades irmãs são determinísticas em qualquer ordem e i
   const make = properties => ({ type: 'object', properties });
   const first = exportSchema(make({ zebra: { type: 'number' }, items: { type: 'string' }, alpha: { type: 'boolean' } }));
   const second = exportSchema(make({ alpha: { type: 'boolean' }, zebra: { type: 'number' }, items: { type: 'string' } }));
-  assert.deepEqual(second, first);
-  assert.deepEqual(Object.keys(first.properties), ['alpha', 'items', 'zebra']);
+  assert.deepEqual(Object.keys(first.properties), ['zebra', 'items', 'alpha']);
+  assert.deepEqual(Object.keys(second.properties), ['alpha', 'zebra', 'items']);
 });
 
 test('ticket 26: objetos, arrays e aninhamento profundo preservam metadados e restrições', () => {
@@ -85,6 +96,23 @@ test('ticket 26 rework: nomes de propriedades inseguros falham antes de qualquer
     assert.throws(() => nodesToSchema(root), new RegExp(`Unsafe object property name: ${name.replace('.', '\\.')}`));
     assert.equal(JSON.stringify(root), before);
   }
+});
+
+test('ticket 26 G4: exportação acompanha reordenação antes, depois e dentro', () => {
+  const model = new SchemaModel({ type: 'object', properties: {
+    zeta: { type: 'string' }, alpha: { type: 'object', properties: {} }, middle: { type: 'number' }
+  } });
+  const alpha = model.root.children.find(node => node.name === 'alpha');
+  const middle = model.root.children.find(node => node.name === 'middle');
+  const zeta = model.root.children.find(node => node.name === 'zeta');
+  model.move(alpha.id, -1);
+  assert.deepEqual(Object.keys(model.schema().properties), ['alpha', 'zeta', 'middle']);
+  assert.equal(model.moveNode(middle.id, zeta.id, 'before'), true);
+  assert.deepEqual(Object.keys(model.schema().properties), ['alpha', 'middle', 'zeta']);
+  assert.equal(model.moveNode(zeta.id, alpha.id, 'inside'), true);
+  const output = model.schema();
+  assert.deepEqual(Object.keys(output.properties), ['alpha', 'middle']);
+  assert.deepEqual(Object.keys(output.properties.alpha.properties), ['zeta']);
 });
 
 test('ticket 26: Inspector expõe title e controller atualiza node.title sem renomear name', () => {

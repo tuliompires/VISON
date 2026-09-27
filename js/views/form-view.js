@@ -37,7 +37,25 @@ export class FormView{
 
 export { generateUuidV4, isUuidEligible };
 
-FormView.prototype.getExportSnapshot=function(){return clone(this.values)};
+// A ordem visual do formulário é schema.properties; arrays preservam a ordem dos índices renderizados.
+FormView.prototype.getExportSnapshot=function(){
+  const snapshot=(schema,value)=>{
+    if(value===undefined)return undefined;
+    // Arrays preserve positional semantics: an absent slot is exported as JSON null,
+    // while undefined object properties remain omitted below.
+    if(Array.isArray(value))return value.map(item=>item===undefined?null:snapshot(schema?.items,item));
+    if(value!==null&&typeof value==='object'){
+      const ordered={};
+      Object.entries(schema?.properties||{}).forEach(([key,childSchema])=>{
+        const child=snapshot(childSchema,value[key]);
+        if(child!==undefined)ordered[key]=child;
+      });
+      return ordered;
+    }
+    return value;
+  };
+  return snapshot(this.schema,this.values);
+};
 FormView.prototype.focusFirstError=function(){const control=this.root.querySelector('.has-error input,.has-error select');control?.focus();return control};
 const baseRefreshLanguage=FormView.prototype.refreshLanguage;
 FormView.prototype.refreshLanguage=function(){baseRefreshLanguage.call(this);if(this.exportErrorKey){const error=document.querySelector('#form-export-error');if(error){error.textContent=t(this.exportErrorKey,this.exportErrorVars||{});error.hidden=false}}};

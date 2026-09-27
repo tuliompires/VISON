@@ -18,6 +18,8 @@
 
 ## Evidências de gate
 
+- G4 — exportações preservam a ordem visual: `js/utils.js`, `js/services/storage-service.js`, `js/views/form-view.js`, `js/controllers/app-controller.js`, `tests/ticket-26.test.mjs` e `tests/form-export.test.mjs`; validação registrada em `ai_changes/27_G4_20260927-153000.md`.
+
 - G5/G6/G7 aprovados e registrados em `release/G7-RELEASE-RECORD.json`.
 - Snapshot e ZIP produzidos no G7; o manifesto registra hashes e tamanhos do snapshot.
 - G8 revisa a documentação sem alterar código funcional.

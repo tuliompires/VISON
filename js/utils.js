@@ -24,11 +24,8 @@ export function nodesToSchema(node) {
   if (node.type === 'object') {
     result.properties = {};
     const required = [];
-    const properties = [...children].sort((a, b) => {
-      const left = String(a.name || 'property');
-      const right = String(b.name || 'property');
-      return left < right ? -1 : left > right ? 1 : 0;
-    });
+    // A ordem visual da árvore é a ordem atual de children.
+    const properties = children;
     const names = new Set();
     properties.forEach(c => {
       const name = c.name || 'property';

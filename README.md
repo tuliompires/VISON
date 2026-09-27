@@ -60,6 +60,10 @@ Não há `fetch`, `XMLHttpRequest`, `WebSocket`, `eval`, `new Function` ou `docu
 ## Critérios verificados
 
 - Testes determinísticos cobrem árvore, required/items, validação, import/export com metadados, undo/redo, normalização, storage e erro de quota.
+
+## Ordem visual das exportações
+
+As exportações do schema usam a ordem visual de `SchemaModel.root.children`, recursivamente; download e cópia JSON compartilham `serializeSchemaJson` e não fazem ordenação genérica. As exportações JSON/YAML do formulário usam a ordem renderizada de `schema.properties`; arrays mantêm a ordem dos índices e objetos de itens seguem `schema.items.properties`. Qualquer nova modalidade de exportação deve declarar sua fonte visual e cobri-la em teste antes de ser adicionada.
 - `node --check` cobre todos os módulos da aplicação.
 - Checagem textual confirma CSP e ausência das APIs/sinks proibidas.
 - QA visual interativo não é declarado: depende de navegador local e deve ser revalidado pelo Tester.

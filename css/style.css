@@ -26,6 +26,7 @@
 .form-generate-uuid{flex:0 0 auto;white-space:nowrap}
 
 .field.check{grid-column:2;align-self:end;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:9px;height:35px;min-height:35px;padding:0;margin:0;white-space:nowrap}
+.field-format-description{color:var(--muted);font-size:10px;line-height:1.4;min-height:14px}
 .field.check .field-check-label{display:block;color:#aebacd;line-height:1.2}
 
 @media(max-width:650px){.field.check{grid-column:1}}

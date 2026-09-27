@@ -4,6 +4,9 @@ import { FormView } from './views/form-view.js';
 import { AppController } from './controllers/app-controller.js';
 import { storageService } from './services/storage-service.js';
 import { applyTranslations, setLanguage } from './i18n.js';
+import { applyTheme, getTheme, setTheme } from './services/theme-service.js';
+
+applyTheme(getTheme());
 
 const model = new SchemaModel();
 const saved = storageService.load();
@@ -15,6 +18,8 @@ controller.initFileInput();
 applyTranslations();
 document.addEventListener('languagechange',()=>{applyTranslations();view.render();formView.refreshLanguage()});
 document.querySelector('#language-select').addEventListener('change',e=>setLanguage(e.target.value));
+document.querySelector('#theme-select').value=getTheme();
+document.querySelector('#theme-select').addEventListener('change',e=>setTheme(e.target.value));
 
 const restoreStatus = storageService.getStatus();
 if (!restoreStatus.ok) view.showMessage(restoreStatus.message, 'error');

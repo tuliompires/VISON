@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import test from 'node:test';
 import { getUnsupportedSchemaKeywords, initializeFormValues, normalizeFormPath, validateFormData } from '../js/services/form-validation.js';
 import { FormView, generateUuidV4, isUuidEligible } from '../js/views/form-view.js';
+import { FORMAT_OPTIONS } from '../js/views/schema-view.js';
 import { setLanguage, t } from '../js/i18n.js';
 
 const schema={type:'object',required:['name','age'],properties:{name:{type:'string',default:'Ada',minLength:3,maxLength:8,pattern:'^[A-Z].*'},age:{type:'integer',minimum:18,maximum:120},role:{type:'string',enum:['admin','user']},active:{type:'boolean',default:true},tags:{type:'array',items:{type:'string',minLength:2}}}};
@@ -13,6 +14,13 @@ test('form validation accepts valid nested object and homogeneous array',()=>{as
 test('unsupported schema keywords are reported instead of silently reduced',()=>{assert.deepEqual(getUnsupportedSchemaKeywords({type:'object',properties:{x:{$ref:'#/$defs/x'}},prefixItems:[]}),['$ref','prefixItems'])});
 test('form validation distinguishes null, false, zero and empty strings',()=>{const typed={type:'object',properties:{nullable:{type:'null'},flag:{type:'boolean'},count:{type:'number'},text:{type:'string',minLength:2}}};assert.deepEqual(validateFormData(typed,{nullable:null,flag:false,count:0,text:''}).map(error=>error.keyword),['minLength'])});
 test('uuid format is supported while unknown formats remain rejected',()=>{assert.deepEqual(getUnsupportedSchemaKeywords({type:'string',format:'uuid'}),[]);assert.deepEqual(getUnsupportedSchemaKeywords({type:'string',format:'binary'}),['format:binary'])});
+test('format Inspector exposes the 19 technical codes and descriptions',()=>{
+  assert.equal(FORMAT_OPTIONS.length,19);
+  assert.deepEqual(FORMAT_OPTIONS.map(option=>option.code),['email','date-time','uuid','date','time','uri','ipv4','hostname','uri-reference','duration','ipv6','regex','idn-email','idn-hostname','uri-template','json-pointer','relative-json-pointer','iri','iri-reference']);
+  assert.ok(FORMAT_OPTIONS.every(option=>option.short&&option.description));
+  const source=fs.readFileSync(new URL('../js/views/schema-view.js',import.meta.url),'utf8');
+  assert.match(source,/type:'format'/);assert.match(source,/field-format-description/);assert.match(source,/aria-describedby/);assert.match(source,/addEventListener\('change'/);
+});
 test('date, date-time, IPv4 and IPv6 reject malformed values',()=>{
   const cases=[['date','2024-02-30'],['date-time','2024-13-01T25:61:61Z'],['ipv4','256.1.1.1'],['ipv6','gggg::1']];
   for(const [format,value] of cases)assert.equal(validateFormData({type:'string',format},value).at(0)?.keyword,'format');
@@ -88,10 +96,9 @@ test('Inspector and FormView share one native checkbox contract without glyph ps
   assert.match(css,/\.form-field\.boolean-field input\.vison-checkbox\{[^}]*width:auto/);
 });
 
-test('UUID eligibility uses business property names and schema format, never HTML ids',()=>{
-  for(const name of ['id','ID','ag-id','user_id'])assert.equal(isUuidEligible(name,{type:'string'}),true);
-  assert.equal(isUuidEligible('identifier',{type:'string',format:'uuid'}),true);
-  for(const [name,schema] of [['identifier',{type:'string'}],['id',{type:'number'}],['id',{type:'array'}],['id',{type:'string',enum:['a']}],['field_identifier',{type:'string'}]])assert.equal(isUuidEligible(name,schema),false);
+test('UUID eligibility depends exclusively on format uuid and string type',()=>{
+  for(const name of ['id','ID','ag-id','user_id','identifier'])assert.equal(isUuidEligible(name,{type:'string',format:'uuid'}),true);
+  for(const [name,schema] of [['id',{type:'string'}],['id',{type:'string',format:'email'}],['id',{type:'number',format:'uuid'}],['id',{type:'array',format:'uuid'}],['id',{type:'string',format:'uuid',enum:['a']}],['field_identifier',{type:'string',format:'hostname'}]])assert.equal(isUuidEligible(name,schema),false);
 });
 
 test('UUID v4 uses randomUUID or a correctly masked getRandomValues fallback',()=>{

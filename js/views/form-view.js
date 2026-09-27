@@ -6,7 +6,7 @@ const el=(tag,props={},text='')=>{const node=document.createElement(tag);Object.
 const pathKey=path=>normalizeFormPath(path.map(String).join('.'));
 const getAt=(value,path)=>path.reduce((current,key)=>current?.[key],value);
 const setAt=(value,path,next)=>{if(!path.length)return next;let target=value;for(let index=0;index<path.length-1;index+=1){const key=path[index];if(target[key]===undefined)target[key]=Number.isInteger(Number(path[index+1]))?[]:{ };target=target[key]}target[path.at(-1)]=next;return value};
-const isUuidEligible=(propertyName,schema)=>{if(!schema||schema.type!=='string'||schema.enum)return false;const name=String(propertyName||'');return name.toLowerCase()==='id'||/-id$/i.test(name)||/_id$/i.test(name)||schema.format==='uuid'};
+const isUuidEligible=(propertyName,schema)=>Boolean(schema&&schema.type==='string'&&!schema.enum&&schema.format==='uuid');
 const uuidBytesToString=bytes=>[...bytes].map(byte=>byte.toString(16).padStart(2,'0')).join('').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/,'$1-$2-$3-$4-$5');
 const generateUuidV4=cryptoObject=>{if(cryptoObject?.randomUUID)return cryptoObject.randomUUID();if(!cryptoObject?.getRandomValues)throw new Error('secure crypto unavailable');const bytes=new Uint8Array(16);cryptoObject.getRandomValues(bytes);bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;return uuidBytesToString(bytes)};
 

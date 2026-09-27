@@ -115,6 +115,13 @@ test('ticket 26 G4: exportação acompanha reordenação antes, depois e dentro'
   assert.deepEqual(Object.keys(output.properties.alpha.properties), ['zeta']);
 });
 
+test('format selecionado no modelo é preservado no JSON Schema exportado',()=>{
+  for(const format of ['uuid','email']){
+    const output=exportSchema({type:'object',properties:{identifier:{type:'string',format}}});
+    assert.equal(output.properties.identifier.format,format);
+  }
+});
+
 test('ticket 26: Inspector expõe title e controller atualiza node.title sem renomear name', () => {
   const view = fs.readFileSync(new URL('../js/views/schema-view.js', import.meta.url), 'utf8');
   assert.match(view, /field\(t\('title'\),'title',this\.model\.selected\(\)\.title/);

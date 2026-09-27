@@ -51,6 +51,17 @@ export class AppController {
   initFileInput(){document.querySelector('#file-input').onchange=e=>{const file=e.target.files[0];if(!file)return;if(file.size > MAX_IMPORT_BYTES){this.view.showMessage(t('importSizeLimit'),'error');e.target.value='';return}const reader=new FileReader();reader.onload=()=>{try{const schema=parseImportedSchema(reader.result);const errors=validateSchema(schema);if(errors.length)throw Error(errors[0]);if(this.model.isDirty()&&!window.confirm(t('unsavedImportConfirm'))){this.view.showMessage(t('importCancelled'),'info');return}this.model.importSchema(schema);this.model.markSaved();this.setDocumentSource(file.name);this.view.showMessage(t('importSuccess'),'success')}catch(err){this.view.showMessage(t('importInvalid',{message:err.message}),'error')}e.target.value=''};reader.readAsText(file)}}
 }
 
+const baseSchemaAction=AppController.prototype.action;
+AppController.prototype.action=function(action,id){
+  if(['add-root','add-child','tree-add-child'].includes(action)){
+    const parent=this.model.find(action==='add-root'?this.model.root.id:(id||this.model.selectedId));
+    if(parent?.type==='array'&&parent.children.length){this.view.showMessage(t('arrayItemExists'),'error');return false}
+  }
+  const result=baseSchemaAction.call(this,action,id);
+  if(action==='tree-duplicate'&&!result){const node=this.model.find(id),parent=node&&this.model.parent(id);if(parent?.type==='array')this.view.showMessage(t('arrayItemExists'),'error')}
+  return result;
+};
+
 AppController.prototype.bindForm=function(){
   if(!this.formView)return;
   const root=this.formView.root,input=document.querySelector('#form-file-input'),load=document.querySelector('[data-action="form-load"]'),submit=document.querySelector('#form-submit'),exportOpen=document.querySelector('#form-export-open'),exportModal=document.querySelector('#form-export-modal'),exportJson=document.querySelector('#form-export-json'),exportYaml=document.querySelector('#form-export-yaml'),exportName=document.querySelector('#form-export-name'),exportCancel=document.querySelector('#form-export-cancel'),exportConfirm=document.querySelector('#form-export-confirm');

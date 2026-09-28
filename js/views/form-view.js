@@ -6,6 +6,7 @@ const el=(tag,props={},text='')=>{const node=document.createElement(tag);Object.
 const pathKey=path=>normalizeFormPath(path.map(String).join('.'));
 const getAt=(value,path)=>path.reduce((current,key)=>current?.[key],value);
 const setAt=(value,path,next)=>{if(!path.length)return next;let target=value;for(let index=0;index<path.length-1;index+=1){const key=path[index];if(target[key]===undefined)target[key]=Number.isInteger(Number(path[index+1]))?[]:{ };target=target[key]}target[path.at(-1)]=next;return value};
+const projectValues=(schema,value)=>{if(value===undefined)return undefined;if(Array.isArray(value))return value.map((item,index)=>Object.prototype.hasOwnProperty.call(value,index)?projectValues(schema?.items,item):undefined);if(value!==null&&typeof value==='object'){const result={};Object.entries(schema?.properties||{}).forEach(([key,child])=>{if(!Object.prototype.hasOwnProperty.call(value,key))return;const projected=projectValues(child,value[key]);if(projected!==undefined)result[key]=projected});return result}return value};
 const isUuidEligible=(propertyName,schema)=>Boolean(schema&&schema.type==='string'&&!schema.enum&&schema.format==='uuid');
 const uuidBytesToString=bytes=>[...bytes].map(byte=>byte.toString(16).padStart(2,'0')).join('').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/,'$1-$2-$3-$4-$5');
 const generateUuidV4=cryptoObject=>{if(cryptoObject?.randomUUID)return cryptoObject.randomUUID();if(!cryptoObject?.getRandomValues)throw new Error('secure crypto unavailable');const bytes=new Uint8Array(16);cryptoObject.getRandomValues(bytes);bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;return uuidBytesToString(bytes)};
@@ -15,6 +16,7 @@ export class FormView{
   renderEmpty(){this.statusKey=null;this.statusKind='';const status=document.querySelector('#form-status'),help=document.querySelector('.form-help');if(status){status.hidden=true;status.textContent='';status.className='form-status'}if(help)help.hidden=true;const empty=el('div',{class:'form-empty',role:'status','aria-live':'polite'});empty.append(el('p',{class:'form-empty-title'},t('formLoadPrompt')),el('p',{class:'form-empty-help'},t('formScope')));this.root.replaceChildren(empty)}
   setStatus(key,kind=''){this.statusKey=key;this.statusKind=kind;const status=document.querySelector('#form-status');if(status){status.hidden=false;status.textContent=t(key);status.className=`form-status ${kind}`}}
   loadSchema(schema){this.schema=clone(schema);this.values=initializeFormValues(this.schema)||{};this.errors=[];this.setStatus('formLoaded','success');const help=document.querySelector('.form-help');if(help)help.hidden=false;this.render()}
+  loadValues(values){this.values=projectValues(this.schema,values)||{};this.errors=[];this.render()}
   clearSchema(){this.schema=null;this.values={};this.errors=[];this.renderEmpty()}
   refreshLanguage(){const active=document.activeElement,focusPath=active?.dataset?.formPath,focusUuid=active?.dataset?.formUuid,summary=document.querySelector('#form-error-summary'),summaryWasOpen=summary?.open,summaryFocused=summary?.contains(active);this.render();if(this.statusKey)this.setStatus(this.statusKey,this.statusKind);const target=focusUuid?this.root.querySelector(`[data-form-uuid="${focusUuid}"]`):focusPath?this.root.querySelector(`[data-form-path="${focusPath}"]`):null;if(target)target.focus();else if(summaryFocused)summary.querySelector('summary')?.focus();if(summaryWasOpen&&summary)summary.open=true}
   render(){if(!this.schema)return this.renderEmpty();this.root.replaceChildren();const fragment=document.createDocumentFragment();fragment.append(this.renderNode(this.schema,[],true,false));this.root.append(fragment);this.renderErrors(this.errors)}
@@ -35,7 +37,7 @@ export class FormView{
   generateUuid(path){const fieldPath=pathKey(path),control=document.getElementById(`form-field-${fieldPath}`),button=this.root.querySelector(`[data-form-uuid="${fieldPath}"]`);if(!control||!button)return false;if(control.value&&!globalThis.confirm?.(t('formUuidConfirm'))){control.focus();return false}try{control.value=generateUuidV4(globalThis.crypto);this.update(path,control);this.setStatus('formUuidGenerated','success');this.root.querySelector(`[data-form-uuid="${fieldPath}"]`)?.focus();return true}catch{this.setStatus('formUuidUnavailable','error');button.focus();return false}}
 }
 
-export { generateUuidV4, isUuidEligible };
+export { generateUuidV4, isUuidEligible, projectValues };
 
 // A ordem visual do formulário é schema.properties; arrays preservam a ordem dos índices renderizados.
 FormView.prototype.getExportSnapshot=function(){

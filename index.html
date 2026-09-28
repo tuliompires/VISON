@@ -70,14 +70,14 @@
     <section id="form-panel" class="tab-panel" role="tabpanel" aria-labelledby="form-tab" hidden>
       <div class="workspace form-layout">
         <section class="panel form-panel" data-i18n-aria-label="formPanel">
-          <div class="panel-heading form-heading"><div><span class="eyebrow" data-i18n="formTab">Form</span><h2 data-i18n="formTitle">Schema form</h2></div><button type="button" class="form-load-button" data-action="form-load" data-i18n="formLoad" data-i18n-title="formLoad" data-i18n-aria-label="formLoad">Load schema</button><input id="form-file-input" type="file" accept=".json,application/json" hidden></div>
-          <p id="form-status" class="form-status" aria-live="polite" data-i18n="formLoadPrompt" hidden></p>
+          <div class="panel-heading form-heading"><div><span class="eyebrow" data-i18n="formTab">Form</span><h2 data-i18n="formTitle">Schema form</h2></div></div>
+          <div class="form-tabs-bar"><div id="form-tabs" class="form-tabs" role="tablist" aria-label="Form schemas"></div><button type="button" id="form-load" class="form-load-button" data-action="form-load" data-i18n-title="formLoad" data-i18n-aria-label="formLoad">＋</button><input id="form-file-input" type="file" accept=".json,application/json,.yaml,.yml,text/yaml" hidden></div>
           <p class="form-help" data-i18n="formScope" hidden></p>
           <div class="form-content">
             <details id="form-error-summary" class="form-error-summary" role="status" aria-live="polite" hidden></details>
             <div id="form-root"></div>
           </div>
-          <div class="form-actions"><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate" disabled aria-disabled="true">Validate form</button><button id="form-export-open" class="form-submit form-export-open" type="button" data-i18n="formExportOpen" data-i18n-title="formExportOpen" data-i18n-aria-label="formExportOpen" disabled>Export form</button></div>
+          <div class="form-actions"><button id="form-import-values" class="form-submit" type="button" data-i18n="formImportValues" data-i18n-title="formImportValues" data-i18n-aria-label="formImportValues" disabled>Import form</button><input id="form-values-file-input" type="file" accept=".json,.yaml,.yml,application/json,text/yaml" hidden><button id="form-submit" class="form-submit" type="button" data-i18n="formValidate" disabled aria-disabled="true">Validate form</button><button id="form-export-open" class="form-submit form-export-open" type="button" data-i18n="formExportOpen" data-i18n-title="formExportOpen" data-i18n-aria-label="formExportOpen" disabled>Export form</button></div>
         </section>
       </div>
     </section>

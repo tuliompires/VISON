@@ -44,7 +44,7 @@ test('form empty state is one composed i18n region and booleans have dedicated l
   const index=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const css=fs.readFileSync(new URL('../css/style.css',import.meta.url),'utf8');
   assert.match(source,/class:'form-empty-title'/); assert.match(source,/class:'form-empty-help'/);
-  assert.match(index,/id="form-status"[^>]*hidden/); assert.match(index,/class="form-help"[^>]*hidden/);
+  assert.doesNotMatch(index,/id="form-status"/); assert.match(index,/class="form-help"[^>]*hidden/);
   assert.match(source,/status\.hidden=false/); assert.match(source,/help\.hidden=false/);
   assert.match(css,/\.form-field\.boolean-field\{/); assert.match(css,/\.form-field\.boolean-field input\[type="checkbox"\]\{[^}]*appearance:auto/);
   assert.match(css,/\.form-field\.boolean-field input\[type="checkbox"\]\{[^}]*width:auto/);

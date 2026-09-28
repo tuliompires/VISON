@@ -5,8 +5,10 @@ import { AppController } from './controllers/app-controller.js';
 import { storageService } from './services/storage-service.js';
 import { applyTranslations, setLanguage } from './i18n.js';
 import { applyTheme, getTheme, setTheme } from './services/theme-service.js';
+import { installFormTabs } from './controllers/form-tabs-controller.js';
 
 applyTheme(getTheme());
+installFormTabs(AppController);
 
 const model = new SchemaModel();
 const saved = storageService.load();

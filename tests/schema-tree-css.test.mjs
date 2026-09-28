@@ -100,7 +100,7 @@ test('tree expansion remains presentation-only for CA-05 and CA-06', () => {
 
 test('main tabs provide the approved CA-01 through CA-08 hierarchy', () => {
   const index=fs.readFileSync(new URL('../index.html', import.meta.url),'utf8');
-  assert.equal((index.match(/role="tablist"/g)||[]).length,1);
+  assert.equal((index.match(/role="tablist"/g)||[]).length,2);
   assert.equal((index.match(/role="tab"/g)||[]).length,3);
   assert.match(index,/id="main-content"[\s\S]*class="main-tabs"/);
   assert.match(index,/class="main-shell"[\s\S]*class="main-tabs"[\s\S]*class="tab-panels"/);
@@ -190,13 +190,14 @@ test('desktop shell keeps document fixed and panel scrolling internal', () => {
   assert.match(css,/\.workspace\{height:auto;min-height:0;flex:1 1 auto;width:100%\}/);
 });
 
-test('form schema loader is unique, translated and placed in the panel heading', () => {
+test('form schema loader is unique, translated and placed beside the form tabs', () => {
   const index=fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.equal((index.match(/data-action="form-load"/g)||[]).length,1);
   assert.equal((index.match(/id="form-file-input"/g)||[]).length,1);
-  assert.match(index,/class="panel-heading form-heading"[\s\S]*data-action="form-load"[\s\S]*id="form-file-input"/);
+  assert.match(index,/class="form-tabs-bar"[\s\S]*data-action="form-load"[\s\S]*id="form-file-input"/);
   assert.doesNotMatch(index,/class="form-toolbar"/);
-  assert.match(index,/data-i18n="formLoad"/);
+  assert.match(index,/id="form-tabs"[^>]*role="tablist"/);
+  assert.match(index,/id="form-load"/);
   assert.match(index,/data-i18n-title="formLoad"/);
   assert.match(index,/data-i18n-aria-label="formLoad"/);
   assert.match(css,/\.form-load-button\{[^}]*width:max-content[^}]*cursor:pointer/);
